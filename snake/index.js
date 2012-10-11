@@ -4,7 +4,7 @@ $(document).ready(function(){
     var ctx = canvas.getContext("2d");
     var w = $("#canvas").width();
     var h = $("#canvas").height();
-
+    
     var cw = 10;    //cell width
     //var d;	    //direction the snake is headed at any given time
     var food;
@@ -24,21 +24,20 @@ $(document).ready(function(){
 
     //*************The game code **********************//
 
-    function init()
-    {
-	    $("#messages").append("Start a new game<br />");
-	    d = "right"; //default direction
-	    bullets_array = [];
-	    move_buffer = [];
-	    move_buffer.push("right");	    //start with a default direction of 'right'
-	    setup_game_params();
-	    create_landscape();
-	    create_snake();
-	    create_food(); //Now we can see the food particle
-	    create_mover();
+    function init(){
+	$("#messages").append("Start a new game<br />");
+	d = "right"; //default direction
+	bullets_array = [];
+	move_buffer = [];
+	move_buffer.push("right");	    //start with a default direction of 'right'
+	setup_game_params();
+	create_landscape();
+	create_snake();
+	create_food(); //Now we can see the food particle
+	create_mover();
 
-	    if(typeof game_loop != "undefined") clearInterval(game_loop);
-	    game_loop = setInterval(paint, 60);
+	if(typeof game_loop != "undefined") clearInterval(game_loop);
+	game_loop = setInterval(paint, 60);
     }
     init();
     shade_buttons();
@@ -370,7 +369,7 @@ $(document).ready(function(){
 	    }
 	return false;
     }
-
+    
     function change_level(){
 	if(game.score > 10){
 	    game.shooting = true;
@@ -383,6 +382,24 @@ $(document).ready(function(){
 	}
 	shade_buttons();
     }
+    
+    //*************The sounds code **********************//
+    
+    function init_sounds(){
+	var snd = new Audio("sounds/ballad2.mp3"); // buffers automatically when created
+	snd.addEventListener('ended', function () {
+	    this.currentTime = 0;
+	    this.play();
+	}, false);
+	snd.play();
+    }
+    
+
+    
+    
+    //************* -------------- **********************//
+    init_sounds();
+
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
 	    var key = e.which;
