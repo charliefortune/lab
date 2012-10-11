@@ -1,0 +1,46 @@
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="index.js" type="text/javascript"></script>
+
+</head>
+<body style ="font-family: verdana;">
+    <h1 style ="margin:2%">The Incredible Snake!</h1>
+    <div style ="margin:2%">
+	This snake goes on a lot of adventures, eating things and dodging things. 
+	Use the arrow keys, and space bar to shoot. Press 'Enter' to pause game.
+    </div>
+    
+    <div>
+	<audio controls="controls" loop="loop">
+	    <source src="horse.ogg" type="audio/ogg" />
+	    <source src="horse.mp3" type="audio/mpeg" />
+	    Your browser does not support the audio element.
+	</audio>
+	    <canvas id="canvas" width="450" height="450">
+		Your browser does not support canvas objects!!
+	    </canvas>
+	<span id = "messages" style="font-size:smaller;height:400px; float:right;overflow:scroll; margin:10px;">
+	    Welcome to The Incredible Snake!!
+	    <br />
+	</span>
+    </div>
+    
+    <div>
+	<button id ="mover_button">
+	    mover
+	</button>
+	<button id ="landscape_button">
+	    landscape
+	</button>
+	<button id ="shooting_button">
+	    shooting
+	</button>
+	<button id ="play_button">
+	    normal game
+	</button>
+	<button id ="pause_button">
+	    pause
+	</button>
+    </div>
+    
+</body>
