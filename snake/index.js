@@ -1,48 +1,6 @@
 $(document).ready(function(){
-    //Canvas stuff
-    var canvas = $("#canvas")[0];
-    var ctx = canvas.getContext("2d");
-    var w = $("#canvas").width();
-    var h = $("#canvas").height();
     
-    var cw = 10;    //cell width
-    //var d;	    //direction the snake is headed at any given time
-    var food;
-    var landscape_max_depth = h-((h/10)*2);
-    var landscape_max_height = 10;
-    var game;	//the game parameters are held in this object
-    var mover;
-    var move_buffer;		//this is an array to hold any quick moves user presses during a single iteration of the game loop
-    var scroll_counter = 0;	//need this to slow down the landscape, so it moves only once every nth iteration
-    var snake_counter = 0;	//this slows down the snake.
-    //this will hold all of the pieces of the scrolling landscape
-    var landscape_array;
-    //Lets create the snake now
-    var snake_array; //an array of cells to make up the snake
-    var bullets_array;	//an array of bullet objects.
-
-
-    //*************The game code **********************//
-
-    function init(){
-	$("#messages").append("Start a new game<br />");
-	d = "right"; //default direction
-	bullets_array = [];
-	move_buffer = [];
-	move_buffer.push("right");	    //start with a default direction of 'right'
-	setup_game_params();
-	create_landscape();
-	create_snake();
-	create_food(); //Now we can see the food particle
-	create_mover();
-
-	if(typeof game_loop != "undefined") clearInterval(game_loop);
-	game_loop = setInterval(paint, 60);
-    }
-    init();
-    shade_buttons();
-    
-    $("#pause_button").click(function(){
+     $("#pause_button").click(function(){
 	game.paused = !(game.paused);
 	$(this).blur();
 	shade_buttons();
@@ -66,6 +24,12 @@ $(document).ready(function(){
 	shade_buttons();
     })
     
+    $("#music_button").click(function(){
+	game.music = !(game.music);
+	$(this).blur();
+	shade_buttons();
+    })
+    
     $("#play_button").click(function(){
 	game.normal_game = !game.normal_game;
 	//if(game.normal_game){
@@ -75,11 +39,60 @@ $(document).ready(function(){
 	shade_buttons();
     })
 
+    
+    //Canvas stuff
+    var canvas = $("#canvas")[0];
+    var ctx = canvas.getContext("2d");
+    var w = $("#canvas").width();
+    var h = $("#canvas").height();
+    
+    var cw = 10;    //cell width
+    //var d;	    //direction the snake is headed at any given time
+    var food;
+    var landscape_max_depth = h-((h/10)*2);
+    var landscape_max_height = 10;
+    var game;	//the game parameters are held in this object
+    var mover;
+    var move_buffer;		//this is an array to hold any quick moves user presses during a single iteration of the game loop
+    var scroll_counter = 0;	//need this to slow down the landscape, so it moves only once every nth iteration
+    var snake_counter = 0;	//this slows down the snake.
+    //this will hold all of the pieces of the scrolling landscape
+    var landscape_array;
+    //Lets create the snake now
+    var snake_array; //an array of cells to make up the snake
+    var bullets_array;	//an array of bullet objects.
+
+    var high_score = 0;	//keep the high score for this browser session
+    var snd;    //the audio player for the background music
+
+    init();
+    shade_buttons();
+
+    //*************The game code **********************//
+
+    function init(){
+	snd = new Audio("sounds/ballad2.ogg"); // buffers automatically when created
+	$("#messages").append("Start a new game<br />");
+	d = "right"; //default direction
+	bullets_array = [];
+	move_buffer = [];
+	move_buffer.push("right");	    //start with a default direction of 'right'
+	setup_game_params();
+	create_landscape();
+	create_snake();
+	create_food(); //Now we can see the food particle
+	create_mover();
+	
+	if(typeof game_loop != "undefined") clearInterval(game_loop);
+	game_loop = setInterval(single_loop, 60);
+    }
+    
     function shade_buttons(){
 	$("#pause_button").css('opacity',game.paused/2 + 0.5);
 	$("#mover_button").css('opacity',game.mover_visible/2 + 0.5);
 	$("#landscape_button").css('opacity',game.scrolling/2 + 0.5);
 	$("#shooting_button").css('opacity',game.shooting/2 + 0.5);
+	$("#music_button").css('opacity',game.music/2 + 0.5);
 	$("#play_button").css('opacity',game.normal_game/2 + 0.5);
     }
 
@@ -92,7 +105,8 @@ $(document).ready(function(){
 		scroll_x: -1,
 		scroll_speed: 2,    //the higher this number is the slower the landscape scrolls
 		paused: false,
-		normal_game: true
+		normal_game: true,
+		music: true
 	    };
     }
 
@@ -151,9 +165,11 @@ $(document).ready(function(){
     }
 
     //Lets do everything that needs to be done in a single loop
-    function paint(){
+    function single_loop(){
+	if(!game.music)snd.pause();
+	else snd.play();
 	//Paint the canvas
-	if(game.paused) return;
+	//if(game.paused) return;
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, w, h);
 	ctx.strokeStyle = "black";
@@ -174,7 +190,8 @@ $(document).ready(function(){
 	if(nx == -1 || nx == w/cw || ny == -1 || ny == h/cw || check_collision(nx, ny, snake_array))
 	{
 	    $("#messages").append("You scored " + game.score + "<br />");
-	    init();
+	    game_over();
+	    //init();
 	    return;
 	}
 
@@ -182,7 +199,8 @@ $(document).ready(function(){
 	{
 	    $("#messages").append("You hit the hills. You scored " + game.score + "<br />");
 	    //restart game
-	    init();
+	    game_over();
+	    //init();
 	    //Lets organize the code a bit now.
 	    return;
 	}
@@ -230,8 +248,13 @@ $(document).ready(function(){
 	
 	//Lets paint the score
 	var score_text = "Score: " + game.score;
-	ctx.fillStyle = "green";
+	ctx.fillStyle = "blue";
 	ctx.fillText(score_text, 5, h-5);
+	
+	//Lets paint the score
+	var high_score_text = "High Score: " + high_score;
+	ctx.fillStyle = (game.score >= high_score) ? "green" : "red";
+	ctx.fillText(high_score_text, 300, h-5);
     }
 
     //Lets first create a generic function to paint cells
@@ -383,19 +406,30 @@ $(document).ready(function(){
 	shade_buttons();
     }
     
+    function game_over(){
+	if(high_score < game.score) {
+	    var new_high_score = true;
+	    high_score = game.score;
+	    var msg = "Well done! New high score: " + high_score + " points.\r\n";
+	}
+	else{
+	    var msg = "You lost, chum. You scored " + game.score + " points.\r\n";
+	}
+	if(confirm(msg + "Would you like to play again?")){
+	    init();
+	}
+	
+    }
+    
     //*************The sounds code **********************//
     
     function init_sounds(){
-	var snd = new Audio("sounds/ballad2.mp3"); // buffers automatically when created
 	snd.addEventListener('ended', function () {
 	    this.currentTime = 0;
 	    this.play();
 	}, false);
 	snd.play();
     }
-    
-
-    
     
     //************* -------------- **********************//
     init_sounds();
