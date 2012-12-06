@@ -1,6 +1,6 @@
 $(document).ready(function(){
     
-     $("#pause_button").click(function(){
+    $("#pause_button").click(function(){
 	game.paused = !(game.paused);
 	$(this).blur();
 	shade_buttons();
@@ -33,7 +33,7 @@ $(document).ready(function(){
     $("#play_button").click(function(){
 	game.normal_game = !game.normal_game;
 	//if(game.normal_game){
-	  //  setup_game_params();
+	//  setup_game_params();
 	//}
 	$(this).blur();
 	shade_buttons();
@@ -62,13 +62,11 @@ $(document).ready(function(){
     var snake_array; //an array of cells to make up the snake
     var bullets_array;	//an array of bullet objects.
 
-    var high_score = 0;	//keep the high score for this browser session
+    var high_score;
+    checkCookie('highscore');	//keep the high score for this browser session
     var snd;    //the audio player for the background music
     snd = new Audio("sounds/ballad2.ogg"); // buffers automatically when created
     
-    init();
-    shade_buttons();
-
     //*************The game code **********************//
 
     function init(){
@@ -99,36 +97,43 @@ $(document).ready(function(){
 
     function setup_game_params(){
 	game = {
-		mover_visible: false,
-		level: 1,
-		loop_count: 0,
-		score: 0,
-		scrolling: false,
-		shooting: false,
-		scroll_x: -1,
-		scroll_speed: 2,    //the higher this number is the slower the landscape scrolls
-		paused: false,
-		normal_game: true,
-		snd: new Audio("sounds/wurm/wurm1.ogg"),
-		music: true
-	    };
+	    mover_visible: false,
+	    level: 1,
+	    loop_count: 0,
+	    score: 0,
+	    scrolling: false,
+	    shooting: false,
+	    scroll_x: -1,
+	    scroll_speed: 2,    //the higher this number is the slower the landscape scrolls
+	    paused: false,
+	    normal_game: true,
+	    snd: new Audio("sounds/wurm/wurm1.ogg"),
+	    music: true
+	};
     }
 
     function create_bullet(){
 	//a bullet has x and y coordinates, and assumes the direction that the snake was travelling in at the time.
-	var new_bullet = {x: snake_array[0].x, y: snake_array[0].y, d:d};
+	var new_bullet = {
+	    x: snake_array[0].x, 
+	    y: snake_array[0].y, 
+	    d:d
+	};
 	bullets_array.push(new_bullet);
-	//console.log(bullets_array);
+    //console.log(bullets_array);
     }
 
     function create_snake(){
-	    var length = 1; //Length of the snake
-	    snake_array = []; //Empty array to start with
-	    for(var i = length-1; i>=0; i--)
-	    {
-		//This will create a horizontal snake starting from the top left
-		snake_array.push({x: i, y:0});
-	    }
+	var length = 1; //Length of the snake
+	snake_array = []; //Empty array to start with
+	for(var i = length-1; i>=0; i--)
+	{
+	    //This will create a horizontal snake starting from the top left
+	    snake_array.push({
+		x: i, 
+		y:0
+	    });
+	}
     }
 
     function create_landscape(){
@@ -147,25 +152,25 @@ $(document).ready(function(){
 
     //Lets create the food now
     function create_food(){
-	    food = {
-		    x: Math.round(Math.random()*(w-cw)/cw), 
-		    y: Math.round(Math.random()*(h-cw)/cw), 
-	    };
-	    //console.log(food);
-	    //This will create a cell with x/y between 0-44
-	    //Because there are 45(450/10) positions accross the rows and columns
+	food = {
+	    x: Math.round(Math.random()*(w-cw)/cw), 
+	    y: Math.round(Math.random()*(h-cw)/cw), 
+	};
+    //console.log(food);
+    //This will create a cell with x/y between 0-44
+    //Because there are 45(450/10) positions accross the rows and columns
     }
 
     //Lets create the mover now
     function create_mover(){
-	    mover = {
-		    x: Math.round(Math.random()*(w-cw)/cw), 
-		    y: Math.round(Math.random()*(h-cw)/cw),
-		    dir_x: -1,
-		    dir_y: 1
-	    };
-	    //This will create a cell with x/y between 0-44
-	    //Because there are 45(450/10) positions accross the rows and columns
+	mover = {
+	    x: Math.round(Math.random()*(w-cw)/cw), 
+	    y: Math.round(Math.random()*(h-cw)/cw),
+	    dir_x: -1,
+	    dir_y: 1
+	};
+    //This will create a cell with x/y between 0-44
+    //Because there are 45(450/10) positions accross the rows and columns
     }
 
     //Lets do everything that needs to be done in a single loop
@@ -209,22 +214,26 @@ $(document).ready(function(){
 	//Lets write the code to make the snake eat the food
 	//If the new head position matches that of the food, create a new head instead of moving the tail
 	if(nx == food.x && ny == food.y){
-		var tail = {x: nx, y: ny};
-		game.score++;
-		//Create new food
-		create_food();
+	    var tail = {
+		x: nx, 
+		y: ny
+	    };
+	    game.score++;
+	    //Create new food
+	    create_food();
 	}
 	else{
-		var tail = snake_array.pop(); //pops out the last cell
-		tail.x = nx; tail.y = ny;
+	    var tail = snake_array.pop(); //pops out the last cell
+	    tail.x = nx;
+	    tail.y = ny;
 	}
 	//The snake can now eat the food.
 	snake_array.unshift(tail); //puts back the tail as the first cell
 
 	for(var i = 0; i < snake_array.length; i++){
-		var c = snake_array[i];
-		//Lets paint 10px wide cells
-		paint_cell(c.x, c.y, "blue");
+	    var c = snake_array[i];
+	    //Lets paint 10px wide cells
+	    paint_cell(c.x, c.y, "blue");
 	}
 
 	//Lets paint the food
@@ -250,10 +259,10 @@ $(document).ready(function(){
 
     //Lets first create a generic function to paint cells
     function paint_cell(x, y, colour){
-	    ctx.fillStyle = colour;
-	    ctx.fillRect(x*cw, y*cw, cw, cw);
-	    ctx.strokeStyle = "white";
-	    ctx.strokeRect(x*cw, y*cw, cw, cw);
+	ctx.fillStyle = colour;
+	ctx.fillRect(x*cw, y*cw, cw, cw);
+	ctx.strokeStyle = "white";
+	ctx.strokeRect(x*cw, y*cw, cw, cw);
     }
 
     function paint_scores(){
@@ -274,17 +283,17 @@ $(document).ready(function(){
     }
     //Lets first create a generic function to paint the mover
     function paint_mover(x, y){
-	    mover.x = mover.x + mover.dir_x;
-	    mover.y = mover.y + mover.dir_y;
-	    if(mover.x > (w-cw)/cw|| mover.x < 1) {
-		//console.log('hit the x boundary ' + mover.dir_x);
-		mover.dir_x = - mover.dir_x;
-	    }
-	    if(mover.y > (h-cw)/cw || mover.y < 1) {
-		//console.log('hit the y boundary ' + mover.dir_y);
-		mover.dir_y = - mover.dir_y;
-	    }
-	    paint_cell(mover.x,mover.y,"green");
+	mover.x = mover.x + mover.dir_x;
+	mover.y = mover.y + mover.dir_y;
+	if(mover.x > (w-cw)/cw|| mover.x < 1) {
+	    //console.log('hit the x boundary ' + mover.dir_x);
+	    mover.dir_x = - mover.dir_x;
+	}
+	if(mover.y > (h-cw)/cw || mover.y < 1) {
+	    //console.log('hit the y boundary ' + mover.dir_y);
+	    mover.dir_y = - mover.dir_y;
+	}
+	paint_cell(mover.x,mover.y,"green");
 	    
     }
 
@@ -297,16 +306,16 @@ $(document).ready(function(){
 	    var last_y = landscape_array[length-1];
 	    var y = last_y;
 	    var dir = landscape_array[length-2] - last_y;
-		if(y > landscape_max_depth){
-		    y = last_y - dir;
-		}
-		else if (y < landscape_max_height){
-		    y++;
-		}
-		else if(Math.floor(Math.random()*10) > 8){
-		    y--;
-		}
-		else y = y - dir;
+	    if(y > landscape_max_depth){
+		y = last_y - dir;
+	    }
+	    else if (y < landscape_max_height){
+		y++;
+	    }
+	    else if(Math.floor(Math.random()*10) > 8){
+		y--;
+	    }
+	    else y = y - dir;
 	    landscape_array.push(y);
 	    scroll_counter = 0;
 	}
@@ -315,10 +324,10 @@ $(document).ready(function(){
     function paint_landscape(){
 	//then run through the landscape array and draw each one.
 	for(var x = 0; x < landscape_array.length; x++)
-	    {
-		var y = landscape_array[x];
-		if(y !== null) paint_cell(x, y, "brown");
-	    }
+	{
+	    var y = landscape_array[x];
+	    if(y !== null) paint_cell(x, y, "brown");
+	}
     }
 
     function move_bullets(){
@@ -371,32 +380,32 @@ $(document).ready(function(){
 
     function check_collision(x, y, array){
 	    
-	    //This function will check if the provided x/y coordinates exist
-	    //in an array of cells or not
-	    for(var i = 0; i < array.length; i++)
-	    {
-		if(array[i].x == x && array[i].y == y){
-		    //$("#messages").append('Whacked yourself in the goolies!<br />');
-		    return true; 
-		}
-
-		else if(game.mover_visible && array[i].x == mover.x && array[i].y == mover.y){
-		    //$("#messages").append('Biffed by the mover :( <br />')
-		    return true;
-		}
-		    
+	//This function will check if the provided x/y coordinates exist
+	//in an array of cells or not
+	for(var i = 0; i < array.length; i++)
+	{
+	    if(array[i].x == x && array[i].y == y){
+		//$("#messages").append('Whacked yourself in the goolies!<br />');
+		return true; 
 	    }
-	    return false;
+
+	    else if(game.mover_visible && array[i].x == mover.x && array[i].y == mover.y){
+		//$("#messages").append('Biffed by the mover :( <br />')
+		return true;
+	    }
+		    
+	}
+	return false;
     }
     
     function check_landscape_collisions(){
 	//check to see if we bumped into the hills
 	for(var i = 0; i < snake_array.length; i++){
-		if(landscape_array[snake_array[i].x] == snake_array[i].y){
-		    //$("#messages").append('Hill crash!<br />');
-		    return true; 
-		}
+	    if(landscape_array[snake_array[i].x] == snake_array[i].y){
+		//$("#messages").append('Hill crash!<br />');
+		return true; 
 	    }
+	}
 	return false;
     }
     
@@ -430,6 +439,7 @@ $(document).ready(function(){
 	else{
 	    var msg = "You lost, chum. You scored " + game.score + " points.\r\n";
 	}
+	setCookie('highscore',high_score,365);
 	if(confirm(msg + "Would you like to play again?")){
 	    init();
 	}
@@ -450,26 +460,56 @@ $(document).ready(function(){
     }
     
     //************* -------------- **********************//
+    function setCookie(c_name,value,exdays){
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+	document.cookie=c_name + "=" + c_value;
+    }
+    
+    function getCookie(c_name){
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++)
+	{
+	    x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+	    y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+	    x=x.replace(/^\s+|\s+$/g,"");
+	    if (x==c_name)
+	    {
+		return unescape(y);
+	    }
+	}
+	return null;
+    }
+    
+    function checkCookie(){
+	high_score=getCookie("highscore");
+	if (high_score == null){
+	    setCookie("highscore",high_score,365);
+	}
+    }
+    init();
+    shade_buttons();
     init_sounds();
 
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
-	    var key = e.which;
-	    //Pressing Enter will pause and unpause the game
-	    if(key == "13") {
-		game.paused = !game.paused;
-		shade_buttons();
-	    }
-	    else{
-		if(key == "37" && d != "right") d = "left";
-		else if(key == "38" && d != "down") d = "up";
-		else if(key == "39" && d != "left") d = "right";
-		else if(key == "40" && d != "up") d = "down";
-		move_buffer.push(d);
-	    }
-	    if(key == '32' && game.shooting){
-		create_bullet();
-	    }
+	var key = e.which;
+	//Pressing Enter will pause and unpause the game
+	if(key == "13") {
+	    game.paused = !game.paused;
+	    shade_buttons();
+	}
+	else{
+	    if(key == "37" && d != "right") d = "left";
+	    else if(key == "38" && d != "down") d = "up";
+	    else if(key == "39" && d != "left") d = "right";
+	    else if(key == "40" && d != "up") d = "down";
+	    move_buffer.push(d);
+	}
+	if(key == '32' && game.shooting){
+	    create_bullet();
+	}
 	    
 	    
 	    
