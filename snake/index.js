@@ -64,14 +64,15 @@ $(document).ready(function(){
 
     var high_score = 0;	//keep the high score for this browser session
     var snd;    //the audio player for the background music
-
+    snd = new Audio("sounds/ballad2.ogg"); // buffers automatically when created
+    
     init();
     shade_buttons();
 
     //*************The game code **********************//
 
     function init(){
-	snd = new Audio("sounds/ballad2.ogg"); // buffers automatically when created
+	snd.pause();
 	$("#messages").append("Start a new game<br />");
 	d = "right"; //default direction
 	bullets_array = [];
@@ -108,6 +109,7 @@ $(document).ready(function(){
 		scroll_speed: 2,    //the higher this number is the slower the landscape scrolls
 		paused: false,
 		normal_game: true,
+		snd: new Audio("sounds/wurm/wurm1.ogg"),
 		music: true
 	    };
     }
@@ -169,8 +171,8 @@ $(document).ready(function(){
     //Lets do everything that needs to be done in a single loop
     function single_loop(){
 	game.loop_count++;
-	if(!game.music)snd.pause();
-	else snd.play();
+	if(!game.music)game.snd.pause();
+	else game.snd.play();
 	//Paint the canvas
 	//if(game.paused) return;
 	ctx.fillStyle = "white";
@@ -243,20 +245,7 @@ $(document).ready(function(){
 	}
 	
 	if(game.normal_game) change_level();
-	
-	//Lets paint the score
-	var score_text = "Score: " + game.score;
-	ctx.fillStyle = "blue";
-	ctx.fillText(score_text, 5, h-5);
-	
-	//Lets paint the highscore
-	var high_score_text = "High Score: " + high_score;
-	ctx.fillStyle = (game.score >= high_score) ? "green" : "red";
-	ctx.fillText(high_score_text, 200, h-5);
-	
-	//Land the loopcount
-	ctx.fillStyle = "black";
-	ctx.fillText(game.loop_count, 400, h-5);
+	paint_scores();
     }
 
     //Lets first create a generic function to paint cells
@@ -267,6 +256,22 @@ $(document).ready(function(){
 	    ctx.strokeRect(x*cw, y*cw, cw, cw);
     }
 
+    function paint_scores(){
+	var score_text = "Score: " + game.score;
+	ctx.fillStyle = "blue";
+	ctx.fillText(score_text, 5, h-5);
+	
+	var high_score_text = "High Score: " + high_score;
+	ctx.fillStyle = (game.score >= high_score) ? "green" : "red";
+	ctx.fillText(high_score_text, 200, h-5);
+	
+	var level_text = "Level: " + game.level;
+	ctx.fillStyle = "black";
+	ctx.fillText(level_text, 300, h-5);
+	
+	//and the loopcount
+	ctx.fillText(game.loop_count, 400, h-5);
+    }
     //Lets first create a generic function to paint the mover
     function paint_mover(x, y){
 	    mover.x = mover.x + mover.dir_x;
@@ -396,7 +401,12 @@ $(document).ready(function(){
     }
     
     function change_level(){
-	game.level = game.loop_count/100;
+	level = Math.floor(game.loop_count/100);
+	if(level > game.level){
+	    var sound_file = 'wurm' + game.level + '.ogg';
+	    game.snd.src = 'sounds/wurm/' + sound_file;
+	    game.level = level;
+	}
 	if(game.level > 10){
 	    game.shooting = true;
 	}
@@ -410,6 +420,8 @@ $(document).ready(function(){
     }
     
     function game_over(){
+	snd.play();
+	game.snd.pause();
 	if(high_score < game.score) {
 	    var new_high_score = true;
 	    high_score = game.score;
