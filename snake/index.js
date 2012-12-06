@@ -99,6 +99,8 @@ $(document).ready(function(){
     function setup_game_params(){
 	game = {
 		mover_visible: false,
+		level: 1,
+		loop_count: 0,
 		score: 0,
 		scrolling: false,
 		shooting: false,
@@ -166,6 +168,7 @@ $(document).ready(function(){
 
     //Lets do everything that needs to be done in a single loop
     function single_loop(){
+	game.loop_count++;
 	if(!game.music)snd.pause();
 	else snd.play();
 	//Paint the canvas
@@ -251,10 +254,14 @@ $(document).ready(function(){
 	ctx.fillStyle = "blue";
 	ctx.fillText(score_text, 5, h-5);
 	
-	//Lets paint the score
+	//Lets paint the highscore
 	var high_score_text = "High Score: " + high_score;
 	ctx.fillStyle = (game.score >= high_score) ? "green" : "red";
-	ctx.fillText(high_score_text, 300, h-5);
+	ctx.fillText(high_score_text, 200, h-5);
+	
+	//Land the loopcount
+	ctx.fillStyle = "black";
+	ctx.fillText(game.loop_count, 400, h-5);
     }
 
     //Lets first create a generic function to paint cells
@@ -394,13 +401,14 @@ $(document).ready(function(){
     }
     
     function change_level(){
-	if(game.score > 10){
+	game.level = game.loop_count/100;
+	if(game.level > 10){
 	    game.shooting = true;
 	}
-	else if(game.score > 7){
+	else if(game.level > 7){
 	    game.scrolling = true;
 	}
-	else if(game.score > 4){
+	else if(game.level > 4){
 	    game.mover_visible = true;
 	}
 	shade_buttons();
