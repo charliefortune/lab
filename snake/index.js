@@ -192,7 +192,7 @@ $(document).ready(function(){
 	//If the head of the snake bumps into its body, the game will restart
 	if(nx == -1 || nx == w/cw || ny == -1 || ny == h/cw || check_collision(nx, ny, snake_array))
 	{
-	    $("#messages").append("You scored " + game.score + "<br />");
+	    //$("#messages").append("You scored " + game.score + "<br />");
 	    game_over();
 	    //init();
 	    return;
@@ -200,11 +200,7 @@ $(document).ready(function(){
 
 	if(game.scrolling && check_landscape_collisions())
 	{
-	    $("#messages").append("You hit the hills. You scored " + game.score + "<br />");
-	    //restart game
 	    game_over();
-	    //init();
-	    //Lets organize the code a bit now.
 	    return;
 	}
 	
@@ -213,7 +209,6 @@ $(document).ready(function(){
 	if(nx == food.x && ny == food.y){
 		var tail = {x: nx, y: ny};
 		game.score++;
-		//$("#messages").append("Munch!<br />");
 		//Create new food
 		create_food();
 	}
@@ -376,12 +371,12 @@ $(document).ready(function(){
 	    for(var i = 0; i < array.length; i++)
 	    {
 		if(array[i].x == x && array[i].y == y){
-		    $("#messages").append('Whacked yourself in the goolies!<br />');
+		    //$("#messages").append('Whacked yourself in the goolies!<br />');
 		    return true; 
 		}
 
 		else if(game.mover_visible && array[i].x == mover.x && array[i].y == mover.y){
-		    $("#messages").append('Biffed by the mover :( <br />')
+		    //$("#messages").append('Biffed by the mover :( <br />')
 		    return true;
 		}
 		    
@@ -393,7 +388,7 @@ $(document).ready(function(){
 	//check to see if we bumped into the hills
 	for(var i = 0; i < snake_array.length; i++){
 		if(landscape_array[snake_array[i].x] == snake_array[i].y){
-		    $("#messages").append('Hill crash!<br />');
+		    //$("#messages").append('Hill crash!<br />');
 		    return true; 
 		}
 	    }
@@ -425,6 +420,9 @@ $(document).ready(function(){
 	}
 	if(confirm(msg + "Would you like to play again?")){
 	    init();
+	}
+	else{
+	    clearInterval(game_loop);
 	}
 	
     }
