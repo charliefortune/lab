@@ -490,7 +490,7 @@ $(document).ready(function(){
     }
     init();
     shade_buttons();
-    init_sounds();
+    //init_sounds();
 
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
