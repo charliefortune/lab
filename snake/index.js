@@ -66,6 +66,7 @@ $(document).ready(function(){
     checkCookie('highscore');	//keep the high score for this browser session
     var snd;    //the audio player for the background music
     snd = new Audio("sounds/ballad2.ogg"); // buffers automatically when created
+    var snd_format = snd.canPlayType('audio/ogg; codecs="vorbis"') ? '.ogg' : '.mp3'; //pick a sound file format for this browser's audio player.
     
     //*************The game code **********************//
 
@@ -107,7 +108,7 @@ $(document).ready(function(){
 	    scroll_speed: 2,    //the higher this number is the slower the landscape scrolls
 	    paused: false,
 	    normal_game: true,
-	    snd: new Audio("sounds/wurm/wurm1.ogg"),
+	    snd: new Audio("sounds/wurm/wurm1" + snd_format),
 	    music: true
 	};
     }
@@ -412,7 +413,7 @@ $(document).ready(function(){
     function change_level(){
 	level = Math.floor(game.loop_count/100);
 	if(level > game.level){
-	    var sound_file = 'wurm' + game.level + '.ogg';
+	    var sound_file = 'wurm' + game.level + snd_format;
 	    game.snd.src = 'sounds/wurm/' + sound_file;
 	    game.level = level;
 	}
