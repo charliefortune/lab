@@ -501,8 +501,9 @@ $(document).ready(function(){
     document.body.addEventListener('touchstart', function(event) {
 	event.preventDefault();
     }, false); 
-    //init_sounds();
+    init_sounds();
     
+    //Listen for touch events if this is played on a touch enabled browser
     canvas.addEventListener('touchstart', function(event) {
 	// If there's exactly one finger inside this element
 	if (event.targetTouches.length == 1) {
