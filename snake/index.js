@@ -42,6 +42,7 @@ $(document).ready(function(){
     
     //Canvas stuff
     var canvas = $("#canvas")[0];
+    var offset = $(canvas).offset();
     var ctx = canvas.getContext("2d");
     var w = $("#canvas").width();
     var h = $("#canvas").height();
@@ -506,8 +507,8 @@ $(document).ready(function(){
 	// If there's exactly one finger inside this element
 	if (event.targetTouches.length == 1) {
 	    var touch = event.targetTouches[0];
-	    var touch_diff_x = current_x - touch.pageX;
-	    var touch_diff_y = current_y - touch.pageY;
+	    var touch_diff_x = current_x - (touch.pageX-offset.left)/cw;
+	    var touch_diff_y = current_y - (touch.pageY-offset.top)/cw;
 	
 	    if(Math.abs(touch_diff_x) > Math.abs(touch_diff_y)){
 		//x plane movement
