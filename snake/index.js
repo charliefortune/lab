@@ -258,6 +258,9 @@ $(document).ready(function(){
 	
 	if(game.normal_game) change_level();
 	paint_scores();
+	
+	current_x = nx;
+	current_y = ny;
     }
 
     //Lets first create a generic function to paint cells
@@ -499,15 +502,30 @@ $(document).ready(function(){
     }, false); 
     //init_sounds();
     
-    var canvas = document.getElementById('canvas');
     canvas.addEventListener('touchstart', function(event) {
 	// If there's exactly one finger inside this element
 	if (event.targetTouches.length == 1) {
 	    var touch = event.targetTouches[0];
-	    // Place element where the finger is
-	    $('#coords').val(touch.pageX + ":" + touch.pageY);
-//	    canvas.style.left = touch.pageX + 'px';
-//	    canvas.style.top = touch.pageY + 'px';
+	    var touch_diff_x = current_x - touch.pageX;
+	    var touch_diff_y = current_y - touch.pageY;
+	
+	    if(Math.abs(touch_diff_x) > Math.abs(touch_diff_y)){
+		//x plane movement
+		if(touch_diff_x > 0 && d != "right"){
+		    d = "left";
+		} 
+		else if (touch_diff_x < 0 && d != "left"){
+		    d = "right";
+		}
+	    }
+	    else{
+		//y plane movement
+		if(touch_diff_y > 0 && d != "down"){
+		    d = "up";
+		} else if (touch_diff_y < 0 && d != "up"){
+		    d = "down";
+		}
+	    }
 	}
     }, false);
 
@@ -529,9 +547,5 @@ $(document).ready(function(){
 	if(key == '32' && game.shooting){
 	    create_bullet();
 	}
-	    
-	    
-	    
     })
-
 })
