@@ -60,6 +60,8 @@ $(document).ready(function(){
     var landscape_array;
     //Lets create the snake now
     var snake_array; //an array of cells to make up the snake
+    var current_x;  //the current x coordinate of our snake
+    var current_y;  //the current y coordinate of our snake
     var bullets_array;	//an array of bullet objects.
 
     var high_score;
@@ -489,9 +491,25 @@ $(document).ready(function(){
 	    setCookie("highscore",high_score,365);
 	}
     }
+    
     init();
     shade_buttons();
+    document.body.addEventListener('touchstart', function(event) {
+	event.preventDefault();
+    }, false); 
     //init_sounds();
+    
+    var canvas = document.getElementById('canvas');
+    canvas.addEventListener('touchstart', function(event) {
+	// If there's exactly one finger inside this element
+	if (event.targetTouches.length == 1) {
+	    var touch = event.targetTouches[0];
+	    // Place element where the finger is
+	    $('#coords').val(touch.pageX + ":" + touch.pageY);
+//	    canvas.style.left = touch.pageX + 'px';
+//	    canvas.style.top = touch.pageY + 'px';
+	}
+    }, false);
 
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
