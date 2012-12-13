@@ -73,7 +73,7 @@ $(document).ready(function(){
     
     //*************The game code **********************//
 
-    function init(){
+    function init_game(){
 	snd.pause();
 	$("#messages").append("Start a new game<br />");
 	d = "right"; //default direction
@@ -205,7 +205,6 @@ $(document).ready(function(){
 	{
 	    //$("#messages").append("You scored " + game.score + "<br />");
 	    game_over();
-	    //init();
 	    return;
 	}
 
@@ -448,7 +447,7 @@ $(document).ready(function(){
 	}
 	setCookie('highscore',high_score,365);
 	if(confirm(msg + "Would you like to play again?")){
-	    init();
+	    init_game();
 	}
 	else{
 	    clearInterval(game_loop);
@@ -458,7 +457,7 @@ $(document).ready(function(){
     
     //*************The sounds code **********************//
     
-    function init_sounds(){
+    function init_bg_music(){
 	snd.addEventListener('ended', function () {
 	    this.currentTime = 0;
 	    this.play();
@@ -496,12 +495,13 @@ $(document).ready(function(){
 	}
     }
     
-    init();
+    init_bg_music();
+    init_game();
     shade_buttons();
     document.body.addEventListener('touchstart', function(event) {
 	event.preventDefault();
     }, false); 
-    init_sounds();
+    
     
     //Listen for touch events if this is played on a touch enabled browser
     canvas.addEventListener('touchstart', function(event) {
